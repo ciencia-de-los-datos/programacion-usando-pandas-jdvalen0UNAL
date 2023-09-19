@@ -57,7 +57,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    cantidad_por_letra = tbl0['_c1'].value_counts()  # Contar la cantidad de registros por cada letra en la columna _c1
+    cantidad_por_letra = cantidad_por_letra.sort_index()  # Ordenar el resultado por letras en orden alfabético
+    cantidad_por_letra.index.name = None  # Eliminar el nombre del índice
+    return cantidad_por_letra
 
 
 def pregunta_04():
