@@ -22,7 +22,11 @@ def pregunta_01():
     40
 
     """
-    return
+    # Utiliza el método shape para obtener el número de filas
+    cantidad_filas = tbl0.shape[0]
+    
+    # Retorna la cantidad de filas como un entero
+    return cantidad_filas
 
 
 def pregunta_02():
@@ -33,7 +37,10 @@ def pregunta_02():
     4
 
     """
-    return
+    # Obtener la cantidad de columnas en tbl0
+    cantidad_columnas = len(tbl0.columns)
+    
+    return cantidad_columnas
 
 
 def pregunta_03():
