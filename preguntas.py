@@ -73,10 +73,15 @@ def pregunta_04():
     C    5.400000
     D    3.833333
     E    4.785714
-    Name: _c2, dtype: float64
     """
-    return
+    # Leer el archivo tbl0.tsv en un DataFrame llamado tbl0
+    tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 
+    # Agrupar los datos por la columna '_c1' y calcular el promedio de '_c2'
+    resultado = tbl0.groupby('_c1')['_c2'].mean()
+
+    # Devolver el resultado como un DataFrame sin incluir el nombre de la columna '_c1'
+    return resultado.rename_axis(None)
 
 def pregunta_05():
     """
