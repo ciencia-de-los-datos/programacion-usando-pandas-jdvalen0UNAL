@@ -97,7 +97,13 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    # Leer el archivo tbl0.tsv
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Calcular el valor máximo de _c2 por cada letra en _c1
+    resultado = df.groupby('_c1')['_c2'].max()
+    
+    return resultado
 
 
 def pregunta_06():
@@ -109,7 +115,16 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    # Cargamos el archivo tbl1.tsv en un DataFrame
+    df = pd.read_csv("tbl1.tsv", sep="\t")
+    
+    # Obtenemos los valores únicos de la columna _c4, los convertimos a mayúsculas y los ordenamos
+    valores_unicos = df['_c4'].unique()
+    valores_unicos = [valor.upper() for valor in valores_unicos]
+    valores_unicos.sort()
+    
+    # Retornamos el resultado
+    return valores_unicos
 
 
 def pregunta_07():
@@ -125,7 +140,14 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    # Cargamos el archivo tbl0.tsv en un DataFrame
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Calculamos la suma de _c2 por cada letra en la columna _c1
+    suma_por_letra = df.groupby('_c1')['_c2'].sum()
+    
+    # Retornamos el resultado
+    return suma_por_letra
 
 
 def pregunta_08():
@@ -143,7 +165,14 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    # Cargamos el archivo tbl0.tsv en un DataFrame
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Agregamos una nueva columna llamada 'suma' que contiene la suma de '_c0' y '_c2'
+    df['suma'] = df['_c0'] + df['_c2']
+    
+    # Retornamos el DataFrame resultante
+    return df
 
 
 def pregunta_09():
@@ -161,7 +190,26 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    # Carga el archivo tbl0.tsv
+    df = pd.read_csv('tbl0.tsv', sep='\t')
+    
+    # Limpia los valores de la columna '_c3' para eliminar fechas incorrectas
+    df['_c3'] = df['_c3'].str.replace('2999', '1999')
+    
+    # Convierte la columna '_c3' a tipo datetime y maneja fechas incorrectas con errores 'coerce'
+    df['_c3'] = pd.to_datetime(df['_c3'], errors='coerce')
+    
+    # Extrae el año de la columna '_c3' y establece 0 como valor predeterminado para fechas incorrectas
+    df['year'] = df['_c3'].dt.year.fillna(0).astype(int).astype(str)
+    
+    # Elimina la columna '_c3' original si se desea
+    # df = df.drop(columns=['_c3'])
+    
+    # Imprime el DataFrame resultante
+    print(df.to_string(index=False))
+    
+    # Retorna el DataFrame con la columna 'year' agregada
+    return df
 
 
 def pregunta_10():
