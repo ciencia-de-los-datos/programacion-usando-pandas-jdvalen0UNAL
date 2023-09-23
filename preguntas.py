@@ -190,26 +190,18 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    # Carga el archivo tbl0.tsv
+    # Cargar el archivo tbl0.tsv en un DataFrame
     df = pd.read_csv('tbl0.tsv', sep='\t')
-    
-    # Limpia los valores de la columna '_c3' para eliminar fechas incorrectas
-    df['_c3'] = df['_c3'].str.replace('2999', '1999')
-    
-    # Convierte la columna '_c3' a tipo datetime y maneja fechas incorrectas con errores 'coerce'
-    df['_c3'] = pd.to_datetime(df['_c3'], errors='coerce')
-    
-    # Extrae el año de la columna '_c3' y establece 0 como valor predeterminado para fechas incorrectas
-    df['year'] = df['_c3'].dt.year.fillna(0).astype(int).astype(str)
-    
-    # Elimina la columna '_c3' original si se desea
-    # df = df.drop(columns=['_c3'])
-    
-    # Imprime el DataFrame resultante
-    print(df.to_string(index=False))
-    
-    # Retorna el DataFrame con la columna 'year' agregada
+
+    # Agregar la columna "year" al DataFrame
+    df['year'] = pd.to_datetime(df['_c3']).dt.year
+
+    # Reemplazar NaN por 0 en la columna "year" y convertirla a enteros
+    df['year'] = df['year'].fillna(0).astype(int)
+
+    # Devolver el DataFrame resultante sin mostrar índices
     return df
+
 
 
 def pregunta_10():
