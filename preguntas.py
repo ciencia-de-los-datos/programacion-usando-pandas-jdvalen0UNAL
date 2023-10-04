@@ -190,19 +190,14 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    # Cargar el archivo tbl0.tsv en un DataFrame
+    # Cargar el archivo tbl0.tsv
     df = pd.read_csv('tbl0.tsv', sep='\t')
 
-    # Agregar la columna "year" al DataFrame
-    df['year'] = pd.to_datetime(df['_c3']).dt.year
+    # Crear la nueva columna 'year'
+    df['year'] = df['_c3'].str.split('-').str[0]
 
-    # Reemplazar NaN por 0 en la columna "year" y convertirla a enteros
-    df['year'] = df['year'].fillna(0).astype(int)
-
-    # Devolver el DataFrame resultante sin mostrar índices
     return df
-
-
+   
 
 def pregunta_10():
     """
@@ -218,7 +213,16 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    # Cargar el archivo tbl0.tsv
+    df = pd.read_csv('tbl0.tsv', sep='\t')
+
+    # Agrupar por _c1 y concatenar los valores de _c2 con ':'
+    grouped_df = df.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, x))).reset_index()
+
+    # Configurar _c1 como índice
+    grouped_df.set_index('_c1', inplace=True)
+
+    return grouped_df
 
 
 def pregunta_11():
