@@ -213,16 +213,17 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    # Cargar el archivo tbl0.tsv
+    
+      # Cargar el archivo tbl0.tsv
     df = pd.read_csv('tbl0.tsv', sep='\t')
 
-    # Agrupar por _c1 y concatenar los valores de _c2 con ':'
-    grouped_df = df.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, x))).reset_index()
+    # Agrupar por _c1 y ordenar los valores de _c2
+    grouped_df = df.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, sorted(x))))
 
-    # Configurar _c1 como índice
-    grouped_df.set_index('_c1', inplace=True)
+    # Crear un nuevo DataFrame con los resultados
+    df_resultado = pd.DataFrame({'_c0': grouped_df.index, '_c1': grouped_df.values})
 
-    return grouped_df
+    return df_resultado
 
 
 def pregunta_11():
@@ -241,7 +242,21 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    # Cargar el archivo tbl1.tsv
+    df = pd.read_csv('tbl1.tsv', sep='\t')
+
+    # Convertir las columnas a tipo string
+    df['_c4'] = df['_c4'].astype(str)
+
+    # Agrupar por _c0 y construir una lista separada por ',' de los valores de _c4
+    grouped_df = df.groupby('_c0')['_c4'].apply(lambda x: ','.join(sorted(set(','.join(x).split(',')))))
+    
+    # Crear un nuevo DataFrame con la estructura deseada
+    result_df = pd.DataFrame(columns=['_c0', '_c4'])
+    result_df['_c0'] = grouped_df.index
+    result_df['_c4'] = grouped_df.values
+
+    return result_df
 
 
 def pregunta_12():
@@ -259,7 +274,29 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    # Cargar el archivo tbl2.tsv
+    df = pd.read_csv('tbl2.tsv', sep='\t')
+
+    # Unir las columnas '_c5a' y '_c5b' con ':'
+    df['_c5'] = df.apply(lambda row: f"{row['_c5a']}:{row['_c5b']}", axis=1)
+
+    # Agrupar por '_c0' y concatenar las listas de '_c5' separadas por ','
+    grouped_df = df.groupby('_c0')['_c5'].apply(lambda x: ','.join(x))
+
+    # Crear un nuevo DataFrame con los resultados
+    result_df = pd.DataFrame({'_c0': grouped_df.index, '_c5': grouped_df.values})
+
+    # Ordenar por '_c0'
+    result_df['_c0'] = result_df['_c0'].astype(int)
+    result_df = result_df.sort_values(by='_c0')
+
+    # Formatear la columna '_c5' según el estilo esperado
+    result_df['_c5'] = result_df['_c5'].apply(lambda x: ','.join(sorted(x.split(','))))
+
+    # Resetear el índice
+    result_df.reset_index(drop=True, inplace=True)
+
+    return result_df
 
 
 def pregunta_13():
@@ -276,4 +313,14 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    # Cargar los archivos tbl0.tsv y tbl2.tsv
+    tbl0 = pd.read_csv('tbl0.tsv', sep='\t')
+    tbl2 = pd.read_csv('tbl2.tsv', sep='\t')
+
+    # Fusionar los DataFrames en función de la columna '_c0'
+    merged_df = pd.merge(tbl0, tbl2, left_on='_c0', right_on='_c0', how='inner')
+
+    # Calcular la suma de tbl2._c5b por cada valor en tbl0._c1
+    result_series = merged_df.groupby('_c1')['_c5b'].sum()
+
+    return result_series
