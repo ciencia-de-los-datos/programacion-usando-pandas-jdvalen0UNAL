@@ -22,7 +22,11 @@ def pregunta_01():
     40
 
     """
-    return
+    # Utiliza el método shape para obtener el número de filas
+    cantidad_filas = tbl0.shape[0]
+    
+    # Retorna la cantidad de filas como un entero
+    return cantidad_filas
 
 
 def pregunta_02():
@@ -33,7 +37,10 @@ def pregunta_02():
     4
 
     """
-    return
+    # Obtener la cantidad de columnas en tbl0
+    cantidad_columnas = len(tbl0.columns)
+    
+    return cantidad_columnas
 
 
 def pregunta_03():
@@ -50,7 +57,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    cantidad_por_letra = tbl0['_c1'].value_counts()  # Contar la cantidad de registros por cada letra en la columna _c1
+    cantidad_por_letra = cantidad_por_letra.sort_index()  # Ordenar el resultado por letras en orden alfabético
+    cantidad_por_letra.index.name = None  # Eliminar el nombre del índice
+    return cantidad_por_letra
 
 
 def pregunta_04():
@@ -63,10 +73,15 @@ def pregunta_04():
     C    5.400000
     D    3.833333
     E    4.785714
-    Name: _c2, dtype: float64
     """
-    return
+    # Leer el archivo tbl0.tsv en un DataFrame llamado tbl0
+    tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 
+    # Agrupar los datos por la columna '_c1' y calcular el promedio de '_c2'
+    resultado = tbl0.groupby('_c1')['_c2'].mean()
+
+    # Devolver el resultado como un DataFrame sin incluir el nombre de la columna '_c1'
+    return resultado.rename_axis(None)
 
 def pregunta_05():
     """
@@ -82,7 +97,13 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    # Leer el archivo tbl0.tsv
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Calcular el valor máximo de _c2 por cada letra en _c1
+    resultado = df.groupby('_c1')['_c2'].max()
+    
+    return resultado
 
 
 def pregunta_06():
@@ -94,7 +115,16 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    # Cargamos el archivo tbl1.tsv en un DataFrame
+    df = pd.read_csv("tbl1.tsv", sep="\t")
+    
+    # Obtenemos los valores únicos de la columna _c4, los convertimos a mayúsculas y los ordenamos
+    valores_unicos = df['_c4'].unique()
+    valores_unicos = [valor.upper() for valor in valores_unicos]
+    valores_unicos.sort()
+    
+    # Retornamos el resultado
+    return valores_unicos
 
 
 def pregunta_07():
@@ -110,7 +140,14 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    # Cargamos el archivo tbl0.tsv en un DataFrame
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Calculamos la suma de _c2 por cada letra en la columna _c1
+    suma_por_letra = df.groupby('_c1')['_c2'].sum()
+    
+    # Retornamos el resultado
+    return suma_por_letra
 
 
 def pregunta_08():
@@ -128,7 +165,14 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    # Cargamos el archivo tbl0.tsv en un DataFrame
+    df = pd.read_csv("tbl0.tsv", sep="\t")
+    
+    # Agregamos una nueva columna llamada 'suma' que contiene la suma de '_c0' y '_c2'
+    df['suma'] = df['_c0'] + df['_c2']
+    
+    # Retornamos el DataFrame resultante
+    return df
 
 
 def pregunta_09():
@@ -146,8 +190,14 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    # Cargar el archivo tbl0.tsv
+    df = pd.read_csv('tbl0.tsv', sep='\t')
 
+    # Crear la nueva columna 'year'
+    df['year'] = df['_c3'].str.split('-').str[0]
+
+    return df
+   
 
 def pregunta_10():
     """
@@ -163,7 +213,12 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    
+    tbl0.sort_values(by=['_c1', '_c2'], inplace=True)
+    tbl0['_c2'] = tbl0['_c2'].astype(str)
+    tb = tbl0.groupby(['_c1'])['_c2'].apply(':'.join).reset_index()
+    tb.set_index('_c1', inplace=True)
+    return tb
 
 
 def pregunta_11():
@@ -182,7 +237,21 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    # Cargar el archivo tbl1.tsv
+    df = pd.read_csv('tbl1.tsv', sep='\t')
+
+    # Convertir las columnas a tipo string
+    df['_c4'] = df['_c4'].astype(str)
+
+    # Agrupar por _c0 y construir una lista separada por ',' de los valores de _c4
+    grouped_df = df.groupby('_c0')['_c4'].apply(lambda x: ','.join(sorted(set(','.join(x).split(',')))))
+    
+    # Crear un nuevo DataFrame con la estructura deseada
+    result_df = pd.DataFrame(columns=['_c0', '_c4'])
+    result_df['_c0'] = grouped_df.index
+    result_df['_c4'] = grouped_df.values
+
+    return result_df
 
 
 def pregunta_12():
@@ -200,7 +269,29 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    # Cargar el archivo tbl2.tsv
+    df = pd.read_csv('tbl2.tsv', sep='\t')
+
+    # Unir las columnas '_c5a' y '_c5b' con ':'
+    df['_c5'] = df.apply(lambda row: f"{row['_c5a']}:{row['_c5b']}", axis=1)
+
+    # Agrupar por '_c0' y concatenar las listas de '_c5' separadas por ','
+    grouped_df = df.groupby('_c0')['_c5'].apply(lambda x: ','.join(x))
+
+    # Crear un nuevo DataFrame con los resultados
+    result_df = pd.DataFrame({'_c0': grouped_df.index, '_c5': grouped_df.values})
+
+    # Ordenar por '_c0'
+    result_df['_c0'] = result_df['_c0'].astype(int)
+    result_df = result_df.sort_values(by='_c0')
+
+    # Formatear la columna '_c5' según el estilo esperado
+    result_df['_c5'] = result_df['_c5'].apply(lambda x: ','.join(sorted(x.split(','))))
+
+    # Resetear el índice
+    result_df.reset_index(drop=True, inplace=True)
+
+    return result_df
 
 
 def pregunta_13():
@@ -217,4 +308,14 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    # Cargar los archivos tbl0.tsv y tbl2.tsv
+    tbl0 = pd.read_csv('tbl0.tsv', sep='\t')
+    tbl2 = pd.read_csv('tbl2.tsv', sep='\t')
+
+    # Fusionar los DataFrames en función de la columna '_c0'
+    merged_df = pd.merge(tbl0, tbl2, left_on='_c0', right_on='_c0', how='inner')
+
+    # Calcular la suma de tbl2._c5b por cada valor en tbl0._c1
+    result_series = merged_df.groupby('_c1')['_c5b'].sum()
+
+    return result_series
