@@ -214,16 +214,11 @@ def pregunta_10():
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
     
-      # Cargar el archivo tbl0.tsv
-    df = pd.read_csv('tbl0.tsv', sep='\t')
-
-    # Agrupar por _c1 y ordenar los valores de _c2
-    grouped_df = df.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str, sorted(x))))
-
-    # Crear un nuevo DataFrame con los resultados
-    df_resultado = pd.DataFrame({'_c0': grouped_df.index, '_c1': grouped_df.values})
-
-    return df_resultado
+    tbl0.sort_values(by=['_c1', '_c2'], inplace=True)
+    tbl0['_c2'] = tbl0['_c2'].astype(str)
+    tb = tbl0.groupby(['_c1'])['_c2'].apply(':'.join).reset_index()
+    tb.set_index('_c1', inplace=True)
+    return tb
 
 
 def pregunta_11():
